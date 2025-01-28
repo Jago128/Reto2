@@ -22,7 +22,7 @@ public class Main {
 		System.out.println("2. Cambiar nombre de un equipo");
 		System.out.println("3. Mostrar integrantes");
 		System.out.println("4. Borrar un integrante");
-		//more to be added
-		return Utilidades.leerInt(0,5);
+		//Pueden haber más opciones
+		return Utilidades.leerInt(0,4);
 	}
 }
