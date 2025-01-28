@@ -44,6 +44,10 @@ public class Main {
 		return Utilidades.leerInt(0,4);
 	}
 	
+	public static void fillData() {
+		
+	}
+	
 	public static void addEntr() {
 		
 	}
