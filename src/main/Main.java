@@ -10,10 +10,12 @@ public class Main {
 		File intr=new File("integrantes.dat");
 		File equipo=new File("equipo.dat");
 		int menu=menu();
+		
+		do {
+			switch (menu) {
 
-		switch (menu) {
-
-		}
+			}
+		} while (menu!=0);
 	}
 
 	public static int menu() {
