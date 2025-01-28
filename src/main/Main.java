@@ -13,7 +13,23 @@ public class Main {
 		
 		do {
 			switch (menu) {
-
+			
+			case 1:
+				
+				break;
+				
+			case 2:
+				
+				break;
+				
+			case 3:
+				
+				break;
+				
+			case 4:
+				
+				break;
+			
 			}
 		} while (menu!=0);
 	}
@@ -26,5 +42,21 @@ public class Main {
 		System.out.println("4. Borrar un integrante");
 		//Pueden haber más opciones
 		return Utilidades.leerInt(0,4);
+	}
+	
+	public static void addEntr() {
+		
+	}
+	
+	public static void modifEquipoName() {
+		
+	}
+	
+	public static void showIntr() {
+		
+	}
+	
+	public static void deleteIntr() {
+		
 	}
 }
