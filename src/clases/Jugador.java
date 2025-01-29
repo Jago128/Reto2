@@ -1,6 +1,8 @@
 package clases;
 
 public class Jugador extends Integrante {
+	private static final long serialVersionUID = 1L;
+	
 	private int codJ;
 	private boolean lesionado;
 	private int goles;

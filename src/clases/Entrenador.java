@@ -1,6 +1,8 @@
 package clases;
 
 public class Entrenador extends Integrante {
+	private static final long serialVersionUID = 1L;
+	
 	private int codEntr;
 	private TipoEntr tipo;
 

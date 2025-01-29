@@ -10,19 +10,19 @@ public class Main {
 		File liga=new File("liga.dat");
 		File equipo=new File("equipo.dat");
 		int menu=menu();
-		
+
 		if (!liga.exists()) {
 			fillDataLiga(liga);
 		}
 		if (!equipo.exists()) {
 			fillDataEquipo(equipo);
 		}
-		
+
 		do {
 			switch (menu) {
 
 			case 1:
-				añadirEntr(equipo,liga);
+				añadirEntr(equipo);
 				break;
 
 			case 2:
@@ -115,21 +115,64 @@ public class Main {
 		}
 	}
 
-	public static void añadirEntr(File equipo, File liga) {
+	public static void añadirEntr(File equipo) {
 		MyObjectOutputStream moos;
-		ObjectInputStream ois;
-		String nom;
-		int codE, codL;
-		
-		
+		String nom, pais, setTipo;
+		int codE;
+		boolean error=false;
+		TipoEntr tipo=null;
+
+		System.out.println("Introduce el nombre del entrenador:");
+		nom=Utilidades.introducirCadena();
+		System.out.println("Introduce el pais:");
+		pais=Utilidades.introducirCadena();
+		//placeholder introducir
+		System.out.println("Introduce el codigo del entrenador:");
+		codE=Utilidades.leerInt();
+		do {
+			error=false;
+			try {
+				System.out.println("¿El entrenador es Principal, Tecnico, o de Fisio?");
+				setTipo=Utilidades.introducirCadena().toUpperCase();
+				switch (setTipo) {
+				case "PRINCIPAL":
+					tipo=TipoEntr.PRINCIPAL;
+					break;
+
+				case "TECNICO":
+					tipo=TipoEntr.TECNICO;
+					break;
+
+				case "FISIO":
+					tipo=TipoEntr.FISIO;
+					break;
+
+				default:
+					throw new IllegalArgumentException("El tipo introducido es invalido.");
+				}
+			} catch (IllegalArgumentException e) {
+				System.out.println(e.getMessage());
+				error=true;
+			}
+		} while (error);
+		Entrenador entr=new Entrenador(nom, pais, codE, tipo);
+		try {
+			moos=new MyObjectOutputStream(new FileOutputStream(equipo,true));
+			moos.writeObject(entr);
+			moos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void modifEquipoNom() {
-		
+
 	}
 
 	public static void mostrIntr() {
-		
+
 	}
 
 	public static void borrarIntr(File equipo) {

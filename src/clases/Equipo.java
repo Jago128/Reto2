@@ -13,7 +13,7 @@ public class Equipo implements Serializable {
 	public Equipo(int codE, String nomE, int codL) {
 		this.codE = codE;
 		this.nomE = nomE;
-		this.listIntegrante=new ArrayList<>();;
+		this.listIntegrante=new ArrayList<>();
 		this.codL = codL;
 	}
 

@@ -1,6 +1,10 @@
 package clases;
 
-public abstract class Integrante {
+import java.io.Serializable;
+
+public abstract class Integrante implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	protected String nombre;
 	protected String pais;
 	
