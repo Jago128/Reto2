@@ -9,7 +9,7 @@ public class Main {
 	public static void main(String[] args) {
 		File liga=new File("liga.dat");
 		File equipo=new File("equipo.dat");
-		int menu=menu();
+		int menu;
 
 		if (!liga.exists()) {
 			fillDataLiga(liga);
@@ -17,8 +17,8 @@ public class Main {
 		if (!equipo.exists()) {
 			fillDataEquipo(equipo);
 		}
-
 		do {
+			menu=menu();
 			switch (menu) {
 
 			case 1:
@@ -26,15 +26,19 @@ public class Main {
 				break;
 
 			case 2:
-
+				modifEquipoNom(equipo);
 				break;
 
 			case 3:
-
+				visualizar(liga, equipo);
 				break;
 
 			case 4:
 				borrarIntr(equipo);
+				break;
+
+			case 0:
+				System.out.println("Hasta luego!");
 				break;
 			}
 		} while (menu!=0);
@@ -115,10 +119,12 @@ public class Main {
 	}
 
 	public static void añadirEntr(File equipo) {
-		MyObjectOutputStream moos;
+		File aux=new File("aux.dat");
+		ObjectInputStream ois;
+		ObjectOutputStream oos;
 		String nom, pais, setTipo;
-		int codE;
-		boolean error=false;
+		int codEntr, codE;
+		boolean error=false, end=false, found=false;
 		TipoEntr tipo=null;
 
 		System.out.println("Introduce el nombre del entrenador:");
@@ -127,7 +133,7 @@ public class Main {
 		pais=Utilidades.introducirCadena();
 		//placeholder introducir
 		System.out.println("Introduce el codigo del entrenador:");
-		codE=Utilidades.leerInt();
+		codEntr=Utilidades.leerInt();
 		do {
 			error=false;
 			try {
@@ -154,24 +160,131 @@ public class Main {
 				error=true;
 			}
 		} while (error);
-		Entrenador entr=new Entrenador(nom, pais, codE, tipo);
-		try {
-			moos=new MyObjectOutputStream(new FileOutputStream(equipo,true));
-			moos.writeObject(entr);
-			moos.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		Entrenador entr=new Entrenador(nom, pais, codEntr, tipo);
+		do {
+			end=false; found=false;
+			System.out.println("Introduce el codigo del equipo que quieras añadir el nuevo entrenador:");
+			codE=Utilidades.leerInt();
+			try {
+				ois=new ObjectInputStream(new FileInputStream(equipo));
+				oos=new ObjectOutputStream(new FileOutputStream(aux));
+				while (!end||!found) {
+					try {
+						Equipo en=(Equipo)ois.readObject();
+						if (en.getCodE()==codE) {
+							found=true;
+							en.getListIntegrante().add(entr);
+						}
+						oos.writeObject(entr);
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					} catch (EOFException e) {
+						end=true;
+					}
+				}
+				oos.close();
+				ois.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (!found) {
+				System.out.println("No se ha encontrado el equipo. Introducelo de nuevo.");
+			}
+		} while (!found);
+		if (equipo.delete()) {
+			aux.renameTo(equipo);
 		}
 	}
 
-	public static void modifEquipoNom() {
 
+	public static void modifEquipoNom(File equipo) {
+		String nom, nuevoN;
+		boolean modificado=false, fin=false;
+		File fichAux=new File("fichAux.dat");
+
+		System.out.println("Introduce el nombre que quieres cambiar");
+		nom=Utilidades.introducirCadena();
+
+		if (equipo.exists()) {
+			try {
+				ObjectInputStream ois=new ObjectInputStream(new FileInputStream(equipo));
+				ObjectOutputStream oos=new ObjectOutputStream(new FileOutputStream(fichAux));
+				while (!fin) {
+					try {
+						Equipo aux=(Equipo)ois.readObject();
+						if (aux.getNomE().equalsIgnoreCase(nom)) {
+							System.out.println(aux.toString());
+							System.out.println("Cual es el nuevo Nombre?");
+							nuevoN = Utilidades.introducirCadena();
+							aux.setNomE(nuevoN);
+							modificado=true;
+						}
+						oos.writeObject(aux);
+					} catch (EOFException e) {
+						fin=true;
+					}
+				}
+				oos.close();
+				ois.close();
+				if (modificado) {
+					System.out.println("Archivo modificado");
+					if (equipo.delete()) {
+						fichAux.renameTo(equipo);
+					}
+				} else {
+					System.out.println("No hay una escuderia con ese nombre");
+					fichAux.delete();
+				}
+
+			} catch (Exception e) {
+				System.out.println("Fatal error");
+			}
+		} else {
+			System.out.println("Fichero nuevo");
+		}
 	}
 
-	public static void mostrIntr() {
+	public static void visualizar(File liga, File equipo) {
+		boolean finArchivo=false;
+		ObjectInputStream ois=null;
 
+		try {	
+			ois=new ObjectInputStream(new FileInputStream(liga));
+			System.out.println("LIGAS");
+			while (!finArchivo) {
+				try {
+					Liga aux=(Liga) ois.readObject();
+					System.out.println(aux.toString());				 
+				} catch (EOFException e) {
+					// Fin del archivo alcanzado
+					finArchivo=true;
+				}
+			}
+			ois.close();
+		}catch(Exception e) {
+			System.out.println("Fatal error");
+		}
+
+		finArchivo=false;
+
+		try {	
+			ois=new ObjectInputStream(new FileInputStream(equipo));
+			System.out.println("EQUIPOS:");
+			while (!finArchivo) {
+				try{
+					Equipo aux=(Equipo) ois.readObject();
+					System.out.println(aux.toString());				 
+				} catch (EOFException e) {
+					// Fin del archivo alcanzado
+					finArchivo=true;
+				}
+			}
+			ois.close();
+		} catch(Exception e) {
+			System.out.println("Fatal error");
+		}
 	}
 
 	public static void borrarIntr(File equipo) {
@@ -203,10 +316,12 @@ public class Main {
 			}
 			ois.close();
 			oos.close();
+
 			if (existe) {
 				if (equipo.delete()) {
 					aux.renameTo(equipo);
 				}
+				System.out.println("TODO BIEN");
 			} else {
 				aux.delete();
 				System.out.println("No se ha encontrado ningun equipo con ese nombre.");
@@ -216,7 +331,6 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		System.out.println("\nVolviendo al menu...\n");
 	}
 
@@ -228,23 +342,28 @@ public class Main {
 
 		System.out.println("¿Quieres eliminar un entrenador o un jugador?");
 		tipo=Utilidades.introducirCadena("entrenador", "jugador");
+
 		if (tipo.equalsIgnoreCase("entrenador")) {
 			for (Integrante integr:eq1.getListIntegrante()) {
 				if (integr instanceof Entrenador) {
-					System.out.println(integr.toString());
+					integr.visualizar();
+					System.out.println("");
 				}
 			}
 			do {
 				System.out.println("Introduzca el codigo del entrenador que quieres borrar:");
 				codigo=Utilidades.leerInt();
 
-				for (int i=0; i<eq1.getListIntegrante().size(); i++) {
-					if (eq1.getListIntegrante().get(i) instanceof Entrenador && ((Entrenador) eq1.getListIntegrante().get(i)).getCodEntr()==codigo) {
-						eq1.getListIntegrante().remove(i);
-						equipo=eq1;
-						existe=true;
+				for (Integrante i:eq1.getListIntegrante()) {
+					if (i instanceof Entrenador) {
+						if (((Entrenador) i).getCodEntr()==codigo) {
+							eq1.getListIntegrante().remove(i);
+							equipo=eq1;
+							existe=true;
+						}
 					}
 				}
+
 				if (!existe) {
 					System.out.println("No existe ningun entrenador con ese codigo!");
 				}
@@ -253,19 +372,24 @@ public class Main {
 		} else {
 			for (Integrante integr:eq1.getListIntegrante()) {
 				if (integr instanceof Jugador) {
-					System.out.println(integr.toString());
+					integr.visualizar();
+					System.out.println("");
 				}
 			}
 			do {
 				System.out.println("Introduzca el codigo del jugador que quieres borrar:");
 				codigo=Utilidades.leerInt();
-				for (int i=0; i<eq1.getListIntegrante().size(); i++) {
-					if (eq1.getListIntegrante().get(i) instanceof Jugador && ((Jugador) eq1.getListIntegrante().get(i)).getCodJ()==codigo) {
-						eq1.getListIntegrante().remove(i);
-						equipo=eq1;
-						existe=true;
+
+				for (Integrante i:eq1.getListIntegrante()) {
+					if (i instanceof Jugador) {
+						if (((Jugador) i).getCodJ()==codigo) {
+							eq1.getListIntegrante().remove(i);
+							equipo=eq1;
+							existe=true;
+						}
 					}
 				}
+
 				if (!existe) {
 					System.out.println("No existe ningun jugador con ese codigo!");
 				}

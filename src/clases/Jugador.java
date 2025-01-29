@@ -2,7 +2,6 @@ package clases;
 
 public class Jugador extends Integrante {
 	private static final long serialVersionUID = 1L;
-	
 	private int codJ;
 	private boolean lesionado;
 	private int goles;
@@ -36,6 +35,11 @@ public class Jugador extends Integrante {
 
 	public void setGoles(int goles) {
 		this.goles = goles;
+	}
+
+	@Override
+	public String toString() {
+		return "Jugador ["+super.toString()+"codJ=" + codJ + ", lesionado=" + lesionado + ", goles=" + goles + "]";
 	}
 
 	@Override
