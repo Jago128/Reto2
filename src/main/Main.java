@@ -36,7 +36,6 @@ public class Main {
 			case 4:
 				borrarIntr(equipo);
 				break;
-
 			}
 		} while (menu!=0);
 	}
