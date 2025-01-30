@@ -126,7 +126,7 @@ public class Main {
 	}
 
 	public static void añadirEntr(File equipo) {
-		File aux=new File("aux.dat");
+		File aux=new File("fichAux.dat");
 		ObjectInputStream ois;
 		ObjectOutputStream oos;		
 		int codE;
@@ -140,7 +140,7 @@ public class Main {
 			try {
 				ois=new ObjectInputStream(new FileInputStream(equipo));
 				oos=new ObjectOutputStream(new FileOutputStream(aux));
-				while (!end||!found) {
+				while (!end) {
 					try {
 						Equipo en=(Equipo)ois.readObject();
 						if (en.getCodE()==codE) {
@@ -150,10 +150,12 @@ public class Main {
 						oos.writeObject(en);
 					} catch (EOFException e) {
 						end=true;
+					} catch (Exception e) {
+						System.out.println("Fatal error");
 					}
 				}
-				oos.close();
 				ois.close();
+				oos.close();
 			} catch (Exception e) {
 				System.out.println("Fatal error");
 			}
@@ -161,6 +163,7 @@ public class Main {
 				System.out.println("No se ha encontrado el equipo. Introducelo de nuevo.");
 			}
 		} while (!found);
+		
 		if (equipo.delete()) {
 			aux.renameTo(equipo);
 		}
@@ -236,6 +239,8 @@ public class Main {
 						oos.writeObject(aux);
 					} catch (EOFException e) {
 						fin=true;
+					} catch (Exception e) {
+						System.out.println("Fatal error");
 					}
 				}
 				oos.close();
@@ -270,6 +275,8 @@ public class Main {
 					System.out.println(aux.toString());				 
 				} catch (EOFException e) {
 					finArchivo=true;
+				} catch (Exception e) {
+					System.out.println("Fatal error");
 				}
 			}
 			ois.close();
@@ -287,6 +294,8 @@ public class Main {
 					System.out.println(aux.toString());				 
 				} catch (EOFException e) {
 					finArchivo=true;
+				} catch (Exception e) {
+					System.out.println("Fatal error");
 				}
 			}
 			ois.close();
@@ -430,6 +439,8 @@ public class Main {
 						}
 					} catch (EOFException e) {
 						finArchivo = true;
+					} catch (Exception e) {
+						System.out.println("Fatal error");
 					}
 				}
 				oos.close();
@@ -516,6 +527,8 @@ public class Main {
 					}
 				} catch (EOFException e) {
 					finArchivo=true;
+				} catch (Exception e) {
+					System.out.println("Fatal error");
 				}
 			}
 			ois.close();
@@ -536,6 +549,8 @@ public class Main {
 					System.out.println(aux.toString());				 
 				} catch (EOFException e) {
 					finArchivo=true;
+				} catch (Exception e) {
+					System.out.println("Fatal error");
 				}
 			}
 			ois.close();	 
