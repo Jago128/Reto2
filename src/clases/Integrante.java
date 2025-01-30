@@ -2,8 +2,9 @@ package clases;
 
 import java.io.Serializable;
 
-public abstract class Integrante implements Serializable{
+public abstract class Integrante implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
 	protected String nombre;
 	protected String pais;
 	
@@ -30,7 +31,7 @@ public abstract class Integrante implements Serializable{
 
 	@Override
 	public String toString() {
-		return "Nombre: "+nombre+"\nPais: "+pais;
+		return "Nombre:"+nombre+" Pais:"+pais;
 	}
 	
 	public abstract void visualizar();

@@ -2,6 +2,7 @@ package clases;
 
 public class Entrenador extends Integrante {
 	private static final long serialVersionUID = 1L;
+	
 	private int codEntr;
 	private TipoEntr tipo;
 
@@ -29,7 +30,7 @@ public class Entrenador extends Integrante {
 
 	@Override
 	public String toString() {
-		return "Entrenador ["+super.toString()+", codEntr=" + codEntr + ", tipo=" + tipo + "]";
+		return "\nENTRENADOR ["+super.toString()+", codEntr=" + codEntr + ", tipo=" + tipo;
 	}
 
 	@Override

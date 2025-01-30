@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class Equipo implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
 	private int codE;
 	private String nomE;
 	private ArrayList <Integrante> listIntegrante;
@@ -51,6 +52,6 @@ public class Equipo implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Equipo [codE=" + codE + ", nomE=" + nomE + ", listIntegrante=" + listIntegrante + ", codL=" + codL + "]";
+		return "\nEQUIPO [codE=" + codE + ", nomE=" + nomE + ", codL=" + codL + ", listIntegrante=" + listIntegrante;
 	}
 }
