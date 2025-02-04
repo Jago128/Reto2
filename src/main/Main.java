@@ -219,7 +219,7 @@ public class Main {
 				}
 				ois.close();
 			} catch (IOException | ClassNotFoundException e) {
-				System.out.println("Error al leer el archivo: " + e.getMessage());
+				e.printStackTrace();
 			}
 
 		}
@@ -238,8 +238,8 @@ public class Main {
 		nom = Utilidades.introducirCadena();
 		System.out.println("Introduce el pais:");
 		pais = Utilidades.introducirCadena();
+		
 		// placeholder introducir
-
 		do {
 			System.out.println("Introduce el codigo del entrenador:");
 			codEntr = Utilidades.leerInt();
