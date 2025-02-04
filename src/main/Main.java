@@ -242,7 +242,7 @@ public class Main {
 		// placeholder introducir
 		do {
 			System.out.println("Introduce el codigo del entrenador:");
-			codEntr = Utilidades.leerInt();
+			codEntr = Utilidades.leerInt(1,4);
 
 			esta = buscarEntrenador(equipo, codEntr, codE);
 			if (esta) {
