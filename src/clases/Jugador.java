@@ -2,23 +2,22 @@ package clases;
 
 public class Jugador extends Integrante {
 	private static final long serialVersionUID = 1L;
-	
-	private int codJ;
+	private String codJ;
 	private boolean lesionado;
 	private int goles;
 	
-	public Jugador(String nombre, String pais, int codJ, boolean lesionado, int goles) {
+	public Jugador(String nombre, String pais, boolean lesionado, int goles) {
 		super(nombre, pais);
-		this.codJ = codJ;
+		this.codJ = this.nombre.substring(0, 3).toUpperCase() +"-"+ this.pais.substring(0, 3).toUpperCase();
 		this.lesionado = lesionado;
 		this.goles = goles;
 	}
 
-	public int getCodJ() {
+	public String getCodJ() {
 		return codJ;
 	}
 
-	public void setCodJ(int codJ) {
+	public void setCodJ(String codJ) {
 		this.codJ = codJ;
 	}
 

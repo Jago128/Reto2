@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 public class Equipo implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
 	private int codE;
 	private String nomE;
 	private ArrayList <Integrante> listIntegrante;

@@ -2,6 +2,7 @@ package main;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 import utilidades.*;
@@ -26,7 +27,7 @@ public class Main {
 			switch (menu) {
 
 			case 1:
-				añadirEntr(equipo);
+				añadirEntr(equipo, liga);
 				break;
 
 			case 2:
@@ -49,6 +50,10 @@ public class Main {
 				añadirEquipo(liga, equipo);
 				break;
 
+			case 7:
+				ordenarGoleadoresPorGoles(equipo);
+				break;
+
 			case 0:
 				System.out.println("Hasta luego!");
 				break;
@@ -64,8 +69,9 @@ public class Main {
 		System.out.println("4. Borrar un integrante");
 		System.out.println("5. Eliminar equipo");
 		System.out.println("6. Añadir equipo");
+		System.out.println("7. Mayores goleadores");
 		// Pueden haber más opciones
-		return Utilidades.leerInt(0, 6);
+		return Utilidades.leerInt(0, 7);
 	}
 
 	public static void fillDataLiga(File liga) {
@@ -100,10 +106,10 @@ public class Main {
 		Entrenador entr4 = new Entrenador("Charlie", "China", 1, TipoEntr.PRINCIPAL);
 		Entrenador entr5 = new Entrenador("Henry", "Australia", 1, TipoEntr.PRINCIPAL);
 
-		Jugador j1 = new Jugador("Carlos", "España", 1, false, 58);
-		Jugador j2 = new Jugador("Kevin", "España", 1, true, 3);
-		Jugador j3 = new Jugador("Mohammed", "Arabia Saudi", 1, false, 27);
-		Jugador j4 = new Jugador("Aritz", "Alemania", 1, false, 69);
+		Jugador j1 = new Jugador("Carlos", "España", false, 58);
+		Jugador j2 = new Jugador("Kevin", "España", true, 3);
+		Jugador j3 = new Jugador("Mohammed", "Arabia Saudi", false, 27);
+		Jugador j4 = new Jugador("Aritz", "Alemania", false, 69);
 
 		e1.getListIntegrante().add(entr1);
 		e1.getListIntegrante().add(entr2);
@@ -132,24 +138,27 @@ public class Main {
 		}
 	}
 
-	public static void añadirEntr(File equipo) {
+	public static void añadirEntr(File equipo, File liga) {
 		File aux = new File("fichAux.dat");
 		ObjectInputStream ois;
 		ObjectOutputStream oos;
-		int codE;
-		boolean end = false, found = false, modificado=false;
+		int codE, codL;
+		boolean end = false, found = false, modificado = false, error = false;
 		Entrenador entr;
 
 		do {
 			end = false;
 			found = false;
+			
+			visualizar(liga, equipo);
+			System.out.println("\nIntroduce el codigo de la liga del equipo:");
+			codL = Utilidades.leerInt();
 			System.out.println("Introduce el codigo del equipo que quieras añadir el nuevo entrenador:");
 			codE = Utilidades.leerInt();
 			try {
+				validarEntrenadores(equipo, codE, error);
 
-				validarEntrenadores(equipo, codE);
-
-				entr = datosEntrenador(equipo, codE);
+				entr = datosEntrenador(equipo, codL, codE);
 				ois = new ObjectInputStream(new FileInputStream(equipo));
 				oos = new ObjectOutputStream(new FileOutputStream(aux));
 				while (!end || !found) {
@@ -159,10 +168,10 @@ public class Main {
 						if (en.getCodE() == codE) {
 							found = true;
 							en.getListIntegrante().add(entr);
-							modificado=true;
+							modificado = true;
 						}
 						oos.writeObject(en);
-
+						
 					} catch (ClassNotFoundException e) {
 
 						e.printStackTrace();
@@ -177,8 +186,8 @@ public class Main {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (ExcepcionEntrenador e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				error = true;
+				e.getMessage();
 			}
 			if (!found) {
 
@@ -186,16 +195,16 @@ public class Main {
 			}
 		} while (!found);
 
-		if(modificado) {
+		if (modificado) {
 			if (equipo.delete()) {
 				aux.renameTo(equipo);
-
+				System.out.println("Entrenador creado correctamente");
 			}
 		}
 
 	}
 
-	public static void validarEntrenadores(File equipo, int codE) throws ExcepcionEntrenador {
+	public static void validarEntrenadores(File equipo, int codE, boolean error) throws ExcepcionEntrenador {
 		int contadorEntrenadores = 0;
 		if (equipo.exists()) {
 
@@ -206,6 +215,7 @@ public class Main {
 					try {
 						Equipo en = (Equipo) ois.readObject();
 						if (en.getCodE() == codE) {
+							error = true;
 							// Contamos los entrenadores de este equipo
 							for (Integrante integrante : en.getListIntegrante()) {
 								if (integrante instanceof Entrenador) {
@@ -219,7 +229,7 @@ public class Main {
 				}
 				ois.close();
 			} catch (IOException | ClassNotFoundException e) {
-				e.printStackTrace();
+				System.out.println("Error al leer el archivo: " + e.getMessage());
 			}
 
 		}
@@ -228,7 +238,7 @@ public class Main {
 		}
 	}
 
-	public static Entrenador datosEntrenador(File equipo, int codE) {
+	public static Entrenador datosEntrenador(File equipo, int codL, int codE) {
 		String nom, pais, setTipo;
 		int codEntr;
 		boolean error = false, esta = false;
@@ -238,13 +248,13 @@ public class Main {
 		nom = Utilidades.introducirCadena();
 		System.out.println("Introduce el pais:");
 		pais = Utilidades.introducirCadena();
-		
 		// placeholder introducir
+
 		do {
 			System.out.println("Introduce el codigo del entrenador:");
-			codEntr = Utilidades.leerInt(1,4);
+			codEntr = Utilidades.leerInt();
 
-			esta = buscarEntrenador(equipo, codEntr, codE);
+			esta = buscarEntrenador(equipo, codL, codEntr, codE);
 			if (esta) {
 				System.out.println("Ese codigo de entrenador ya existe, introduce otro");
 			}
@@ -281,7 +291,7 @@ public class Main {
 		return entr;
 	}
 
-	public static boolean buscarEntrenador(File equipo, int codEntr, int codE) {
+	public static boolean buscarEntrenador(File equipo, int codL, int codEntr, int codE) {
 		boolean finArchivo = false;
 		ObjectInputStream ois = null;
 		try {
@@ -290,7 +300,7 @@ public class Main {
 			while (!finArchivo) {
 				try {
 					Equipo aux = (Equipo) ois.readObject();
-					if (aux.getCodE() == codE) {
+					if (aux.getCodE() == codE && aux.getCodL()==codL) {
 						for (Integrante i : aux.getListIntegrante()) {
 							if (i instanceof Entrenador) {
 								if (((Entrenador) i).getCodEntr() == codEntr) {
@@ -348,7 +358,7 @@ public class Main {
 						fichAux.renameTo(equipo);
 					}
 				} else {
-					System.out.println("No hay una escuderia con ese nombre");
+					System.out.println("No hay una equipo con ese nombre");
 					fichAux.delete();
 				}
 
@@ -362,9 +372,12 @@ public class Main {
 
 	public static void visualizar(File liga, File equipo) {
 
-		boolean finArchivo = false;
+		boolean finArchivo = false, existe;
+
 		ObjectInputStream ois = null;
+
 		ArrayList<Liga> listaLigas = new ArrayList<>();
+
 		ArrayList<Equipo> listaEquipos = new ArrayList<>();
 
 		try {
@@ -372,22 +385,31 @@ public class Main {
 			ois = new ObjectInputStream(new FileInputStream(liga));
 
 			while (!finArchivo) {
+
 				try {
+
 					Liga aux = (Liga) ois.readObject();
+
 					listaLigas.add(aux);
+
 				} catch (EOFException e) {
 
 					// Fin del archivo alcanzado
 
 					finArchivo = true;
+
 				}
+
 			}
+
 			ois.close();
 
 		} catch (Exception e) {
 
 			System.out.println("Fatal error");
+
 		}
+
 		finArchivo = false;
 
 		try {
@@ -395,27 +417,57 @@ public class Main {
 			ois = new ObjectInputStream(new FileInputStream(equipo));
 
 			while (!finArchivo) {
+
 				try {
+
 					Equipo aux = (Equipo) ois.readObject();
+
 					listaEquipos.add(aux);
+
 				} catch (EOFException e) {
+
 					// Fin del archivo alcanzado
+
 					finArchivo = true;
+
 				}
+
 			}
+
 			ois.close();
+
 		} catch (Exception e) {
+
 			System.out.println("Fatal error");
+
 		}
 
 		for (Liga l : listaLigas) {
+
+			existe = false;
+
 			System.out.println("\n" + l.toString());
+
 			for (Equipo eq : listaEquipos) {
+
 				if (eq.getCodL() == l.getCodL()) {
+
 					System.out.println(eq.toString());
+
+					existe = true;
+
 				}
+
 			}
+
+			if (!existe) { // PARA QUE APAREZCA ESTE MENSAJE
+
+				System.out.println("\nNo existe ningun equipo en esta liga.");
+
+			}
+
 		}
+
 	}
 
 	public static void borrarIntr(File equipo) {
@@ -506,9 +558,9 @@ public class Main {
 
 		Equipo equipo = null;
 
-		String tipo;
+		String tipo, codigo;
 
-		int codigo;
+		int codigoE;
 
 		boolean existe = false, encontrado = false;
 
@@ -538,7 +590,7 @@ public class Main {
 
 					System.out.println("Introduzca el codigo del entrenador que quieres borrar:");
 
-					codigo = Utilidades.leerInt();
+					codigoE = Utilidades.leerInt();
 
 					Iterator<Integrante> listaintegrantes = eq1.getListIntegrante().iterator();
 
@@ -548,7 +600,7 @@ public class Main {
 
 						if (i instanceof Entrenador) {
 
-							if (((Entrenador) i).getCodEntr() == codigo) {
+							if (((Entrenador) i).getCodEntr() == codigoE) {
 
 								listaintegrantes.remove();
 
@@ -602,7 +654,7 @@ public class Main {
 
 					System.out.println("Introduzca el codigo del jugador que quieres borrar:");
 
-					codigo = Utilidades.leerInt();
+					codigo = Utilidades.introducirCadena();
 
 					Iterator<Integrante> listaintegrantes = eq1.getListIntegrante().iterator();
 
@@ -705,82 +757,94 @@ public class Main {
 
 	public static void añadirEquipo(File liga, File equipo) {
 		MyObjectOutputStream moos;
-		boolean finArchivo = false, lesionado = false;
-		ObjectInputStream ois = null;
-		String nombreLiga, nombreEquipo, respuesta, nombreJugador, pais, lesionaStr, continuar;
-		int id, codJ, goles;
+		boolean lesionado = false, esta = false;
+		String nombreEquipo, respuesta, nombreJugador, pais, lesionaStr, continuar="si";
+		int idEquipo, goles, idLiga;
 
 		mostrarLigas(liga);
 
-		System.out.println("\nIntroduce el nombre de la liga a la que va a pertenecer el quipo: ");
-		nombreLiga = Utilidades.introducirCadena();
+		System.out.println("\nIntroduce el id de la liga a la que va a pertenecer el quipo: ");
+		idLiga = Utilidades.leerInt();
+		System.out.println("Introduce el id del equipo: ");
+		idEquipo = Utilidades.leerInt();
 
-		comprobarEquipo(liga, equipo);
+		esta = comprobarEquipo(liga, equipo, idLiga, idEquipo);
+
+		if (!esta) 
+		{		
+			try {
+				moos = new MyObjectOutputStream(new FileOutputStream(equipo, true));
+
+				System.out.println("Introduce el nombre: ");
+				nombreEquipo = Utilidades.introducirCadena();
+
+				Equipo aux2 = new Equipo(idEquipo, nombreEquipo, idLiga);
+
+				do {
+					System.out.println("¿Que quieres añadir al equipo, un entrenador o un jugador?");
+					respuesta = Utilidades.introducirCadena("entrenador", "jugador");
+
+					if (respuesta.equalsIgnoreCase("entrenador")) {
+
+						Entrenador entr = datosEntrenador(equipo, idLiga, idEquipo);
+						aux2.getListIntegrante().add(entr);
+					}
+
+					if (respuesta.equalsIgnoreCase("jugador")) {
+						System.out.println("Nombre del jugador: ");
+						nombreJugador = Utilidades.introducirCadena();
+
+						System.out.println("Pais del jugador: ");
+						pais = Utilidades.introducirCadena();
+
+						System.out.println("¿El jugador esta lesionado?");
+						lesionaStr = Utilidades.introducirCadena("Si", "No");
+						if (lesionaStr.equalsIgnoreCase("si")) {
+							lesionado = true;
+						}
+
+						System.out.println("Goles que ha metido: ");
+						goles = Utilidades.leerInt();
+
+						Jugador j1 = new Jugador(nombreJugador, pais, lesionado, goles);
+						aux2.getListIntegrante().add(j1);
+					}
+
+					System.out.println("¿Quieres continuar insertando integrantes al equipo?");
+					continuar = Utilidades.introducirCadena("Si", "No");
+
+				} while (continuar.equalsIgnoreCase("si"));
+
+				moos.writeObject(aux2);
+				System.out.println("Equipo creado con exito");
+				moos.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
+
+		} else {
+			System.out.println("Ese equipo ya esta");
+		}
+	}
+
+	public static boolean comprobarEquipo(File liga, File equipo, int idLiga, int idEquipo) {
+		boolean esta = false;
+		boolean estaLiga = false;
+		boolean finArchivo = false;
+		ObjectInputStream ois = null;
 
 		try {
 			ois = new ObjectInputStream(new FileInputStream(liga));
 
-			while (!finArchivo) {
+			while (!finArchivo || !estaLiga) {
 				try {
 					Liga aux = (Liga) ois.readObject();
-					if (aux.getNomL().equalsIgnoreCase(nombreLiga)) {
-						try {
-							moos = new MyObjectOutputStream(new FileOutputStream(equipo, true));
-							System.out.println("Introduce el id del equipo: ");
-							id = Utilidades.leerInt();
-							System.out.println("Introduce el nombre: ");
-							nombreEquipo = Utilidades.introducirCadena();
-
-							Equipo aux2 = new Equipo(id, nombreEquipo, aux.getCodL());
-
-							do {
-								System.out.println("¿Que quieres añadir al equipo, un entrenador o un jugador?");
-								respuesta = Utilidades.introducirCadena("entrenador", "jugador");
-
-								if (respuesta.equalsIgnoreCase("entrenador")) {
-
-									Entrenador entr = datosEntrenador(equipo, id);
-									aux2.getListIntegrante().add(entr);
-								}
-
-								if (respuesta.equalsIgnoreCase("jugador")) {
-									System.out.println("Nombre del jugador: ");
-									nombreJugador = Utilidades.introducirCadena();
-
-									System.out.println("Pais del jugador: ");
-									pais = Utilidades.introducirCadena();
-
-									System.out.println("Codigo del jugador: ");
-									codJ = Utilidades.leerInt();
-
-									System.out.println("¿El jugador esta lesionado?");
-									lesionaStr = Utilidades.introducirCadena("Si", "No");
-									if (lesionaStr.equalsIgnoreCase("si")) {
-										lesionado = true;
-									}
-
-									System.out.println("Goles que ha metido: ");
-									goles = Utilidades.leerInt();
-
-									Jugador j1 = new Jugador(nombreJugador, pais, codJ, lesionado, goles);
-									aux2.getListIntegrante().add(j1);
-								}
-
-								System.out.println("¿Quieres continuar insertando integrantes al equipo?");
-								continuar = Utilidades.introducirCadena("Si", "No");
-
-							} while (continuar.equalsIgnoreCase("si"));
-
-							moos.writeObject(aux2);
-							System.out.println("Equipo creado con exito");
-							moos.close();
-						} catch (FileNotFoundException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+					if (aux.getCodL() == idLiga) {
+						estaLiga = true;
 					}
 				} catch (EOFException e) {
 					// Fin del archivo alcanzado
@@ -793,15 +857,34 @@ public class Main {
 			System.out.println("Fatal error");
 		}
 
-	}
+		if (estaLiga) {
+			finArchivo = false;
+			try {
+				ois = new ObjectInputStream(new FileInputStream(equipo));
 
-	public static boolean comprobarEquipo(File liga, File equipo) {
-		boolean esta = false;
+				while (!finArchivo) {
+					try {
+						Equipo aux = (Equipo) ois.readObject();
+						if (idEquipo == aux.getCodE()&&aux.getCodL()==idLiga) {
+							esta = true;
+						}
+					} catch (EOFException e) {
+						// Fin del archivo alcanzado
+						finArchivo = true;
+					}
+				}
+				ois.close();
 
+			} catch (Exception e) {
+				System.out.println("Fatal error");
+			}
+		} else {
+			System.out.println("Esa liga no esta");
+		}
 		return esta;
 	}
 
-	public static Entrenador datosEntrenador2(File equipo, int codE) {
+	/*public static Entrenador datosEntrenador2(File equipo, int codE) {
 		String nom, pais, setTipo;
 		int codEntr;
 		boolean error = false, esta = false;
@@ -852,7 +935,7 @@ public class Main {
 		Entrenador entr = new Entrenador(nom, pais, codEntr, tipo);
 
 		return entr;
-	}
+	}*/
 
 	public static void mostrarLigas(File liga) {
 		ObjectInputStream ois = null;
@@ -875,5 +958,73 @@ public class Main {
 		} catch (Exception e) {
 			System.out.println("Fatal error");
 		}
+	}
+
+	public static void ordenarGoleadoresPorGoles(File equipo)
+
+	{
+
+		boolean finArchivo = false;
+
+		ObjectInputStream ois = null;
+
+		ArrayList<Goleadores> listaGoleadores = new ArrayList<>();
+
+		try {
+
+			ois = new ObjectInputStream(new FileInputStream(equipo));
+
+			while (!finArchivo) {
+
+				try {
+
+					Equipo aux = (Equipo) ois.readObject();
+
+					for (Integrante i : aux.getListIntegrante())
+
+					{
+
+						if (i instanceof Jugador)
+
+						{
+
+							Jugador j = (Jugador) i;
+
+							Goleadores goleador = new Goleadores(j.getGoles(), aux.getNomE(), j.getNombre());
+
+							listaGoleadores.add(goleador);
+
+						}
+
+					}
+
+				} catch (EOFException e) {
+
+					// Fin del archivo alcanzado
+
+					finArchivo = true;
+
+				}
+
+			}
+
+			ois.close();
+
+			Collections.sort(listaGoleadores);
+
+			for (Goleadores g : listaGoleadores)
+
+			{
+
+				System.out.println(g);
+
+			}
+
+		} catch (Exception e) {
+
+			System.out.println("Fatal error");
+
+		}
+
 	}
 }
