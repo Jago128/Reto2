@@ -8,7 +8,7 @@ public class Jugador extends Integrante {
 	
 	public Jugador(String nombre, String pais, boolean lesionado, int goles) {
 		super(nombre, pais);
-		this.codJ = this.nombre.substring(0, 3).toUpperCase() +"-"+ this.pais.substring(0, 3).toUpperCase();
+		this.codJ = this.nombre.substring(0,3).toUpperCase() +"-"+ this.pais.substring(0,3).toUpperCase();
 		this.lesionado = lesionado;
 		this.goles = goles;
 	}
