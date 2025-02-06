@@ -70,7 +70,6 @@ public class Main {
 		System.out.println("5. Eliminar equipo");
 		System.out.println("6. Añadir equipo");
 		System.out.println("7. Mayores goleadores");
-		// Pueden haber más opciones
 		return Utilidades.leerInt(0, 7);
 	}
 
@@ -149,7 +148,7 @@ public class Main {
 		do {
 			end = false;
 			found = false;
-			
+
 			visualizar(liga, equipo);
 			System.out.println("\nIntroduce el codigo de la liga del equipo:");
 			codL = Utilidades.leerInt();
@@ -171,7 +170,7 @@ public class Main {
 							modificado = true;
 						}
 						oos.writeObject(en);
-						
+
 					} catch (ClassNotFoundException e) {
 
 						e.printStackTrace();
@@ -300,7 +299,7 @@ public class Main {
 			while (!finArchivo) {
 				try {
 					Equipo aux = (Equipo) ois.readObject();
-					if (aux.getCodE() == codE && aux.getCodL()==codL) {
+					if (aux.getCodE() == codE && aux.getCodL() == codL) {
 						for (Integrante i : aux.getListIntegrante()) {
 							if (i instanceof Entrenador) {
 								if (((Entrenador) i).getCodEntr() == codEntr) {
@@ -758,7 +757,7 @@ public class Main {
 	public static void añadirEquipo(File liga, File equipo) {
 		MyObjectOutputStream moos;
 		boolean lesionado = false, esta = false;
-		String nombreEquipo, respuesta, nombreJugador, pais, lesionaStr, continuar="si";
+		String nombreEquipo, respuesta, nombreJugador, pais, lesionaStr, continuar = "si";
 		int idEquipo, goles, idLiga;
 
 		mostrarLigas(liga);
@@ -770,8 +769,7 @@ public class Main {
 
 		esta = comprobarEquipo(liga, equipo, idLiga, idEquipo);
 
-		if (!esta) 
-		{		
+		if (!esta) {
 			try {
 				moos = new MyObjectOutputStream(new FileOutputStream(equipo, true));
 
@@ -822,7 +820,7 @@ public class Main {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}			
+			}
 
 		} else {
 			System.out.println("Ese equipo ya esta");
@@ -863,7 +861,7 @@ public class Main {
 				while (!finArchivo) {
 					try {
 						Equipo aux = (Equipo) ois.readObject();
-						if (idEquipo == aux.getCodE()&&aux.getCodL()==idLiga) {
+						if (idEquipo == aux.getCodE() && aux.getCodL() == idLiga) {
 							esta = true;
 						}
 					} catch (EOFException e) {
@@ -882,58 +880,39 @@ public class Main {
 		return esta;
 	}
 
-	/*public static Entrenador datosEntrenador2(File equipo, int codE) {
-		String nom, pais, setTipo;
-		int codEntr;
-		boolean error = false, esta = false;
-		TipoEntr tipo = null;
-
-		System.out.println("Introduce el nombre del entrenador:");
-		nom = Utilidades.introducirCadena();
-		System.out.println("Introduce el pais:");
-		pais = Utilidades.introducirCadena();
-		// placeholder introducir
-
-		do {
-			System.out.println("Introduce el codigo del entrenador:");
-			codEntr = Utilidades.leerInt();
-
-			esta = buscarEntrenador(equipo, codEntr, codE);
-			if (esta) {
-				System.out.println("Ese codigo de entrenador ya existe, introduce otro");
-			}
-		} while (esta);
-
-		do {
-			error = false;
-			try {
-				System.out.println("¿El entrenador es Principal, Tecnico, o de Fisio?");
-				setTipo = Utilidades.introducirCadena().toUpperCase();
-				switch (setTipo) {
-				case "PRINCIPAL":
-					tipo = TipoEntr.PRINCIPAL;
-					break;
-
-				case "TECNICO":
-					tipo = TipoEntr.TECNICO;
-					break;
-
-				case "FISIO":
-					tipo = TipoEntr.FISIO;
-					break;
-
-				default:
-					throw new IllegalArgumentException("El tipo introducido es invalido.");
-				}
-			} catch (IllegalArgumentException e) {
-				System.out.println(e.getMessage());
-				error = true;
-			}
-		} while (error);
-		Entrenador entr = new Entrenador(nom, pais, codEntr, tipo);
-
-		return entr;
-	}*/
+	/*
+	 * public static Entrenador datosEntrenador2(File equipo, int codE) { String
+	 * nom, pais, setTipo; int codEntr; boolean error = false, esta = false;
+	 * TipoEntr tipo = null;
+	 * 
+	 * System.out.println("Introduce el nombre del entrenador:"); nom =
+	 * Utilidades.introducirCadena(); System.out.println("Introduce el pais:"); pais
+	 * = Utilidades.introducirCadena(); // placeholder introducir
+	 * 
+	 * do { System.out.println("Introduce el codigo del entrenador:"); codEntr =
+	 * Utilidades.leerInt();
+	 * 
+	 * esta = buscarEntrenador(equipo, codEntr, codE); if (esta) {
+	 * System.out.println("Ese codigo de entrenador ya existe, introduce otro"); } }
+	 * while (esta);
+	 * 
+	 * do { error = false; try {
+	 * System.out.println("¿El entrenador es Principal, Tecnico, o de Fisio?");
+	 * setTipo = Utilidades.introducirCadena().toUpperCase(); switch (setTipo) {
+	 * case "PRINCIPAL": tipo = TipoEntr.PRINCIPAL; break;
+	 * 
+	 * case "TECNICO": tipo = TipoEntr.TECNICO; break;
+	 * 
+	 * case "FISIO": tipo = TipoEntr.FISIO; break;
+	 * 
+	 * default: throw new
+	 * IllegalArgumentException("El tipo introducido es invalido."); } } catch
+	 * (IllegalArgumentException e) { System.out.println(e.getMessage()); error =
+	 * true; } } while (error); Entrenador entr = new Entrenador(nom, pais, codEntr,
+	 * tipo);
+	 * 
+	 * return entr; }
+	 */
 
 	public static void mostrarLigas(File liga) {
 		ObjectInputStream ois = null;
