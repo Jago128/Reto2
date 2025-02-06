@@ -29,7 +29,7 @@ public class Entrenador extends Integrante {
 
 	@Override
 	public String toString() {
-		return "\nENTRENADOR ["+super.toString()+", codEntr=" + codEntr + ", tipo=" + tipo;
+		return "\n <ENTRENADOR ["+super.toString()+", codEntr=" + codEntr + ", tipo=" + tipo + ">";
 	}
 
 	@Override
