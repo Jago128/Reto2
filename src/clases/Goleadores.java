@@ -5,8 +5,9 @@ public class Goleadores implements Comparable<Goleadores> {
 	private int goles;
 	private String nombEquipo;
 	private String nombreJugador;
-
-	public Goleadores(int goles, String nombEquipo, String nombre) {
+	
+	public Goleadores(int goles, String nombEquipo, String nombre) 
+	{
 		this.goles = goles;
 		this.nombEquipo = nombEquipo;
 		this.nombreJugador = nombre;
@@ -41,15 +42,19 @@ public class Goleadores implements Comparable<Goleadores> {
 		return "Goleadores [goles=" + goles + ", nombEquipo=" + nombEquipo + ", nombreJugador=" + nombreJugador + "]";
 	}
 
+	
+
 	@Override
 	public int compareTo(Goleadores o) {
 		// Comparar por cantidad de goles (descendente)
 		int resultado = Integer.compare(o.getGoles(), this.goles);
 
-		if (resultado == 0) {
-			resultado = this.nombreJugador.compareTo(o.getNombreJugador());
+		if(resultado==0) {
+
+			resultado=this.nombreJugador.compareTo(o.getNombreJugador());
+
 		}
 		return resultado;
 	}
-
+	
 }
