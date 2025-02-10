@@ -46,6 +46,7 @@ public class Goleadores implements Comparable<Goleadores> {
 
 	@Override
 	public int compareTo(Goleadores o) {
+		// TODO Auto-generated method stub
 		// Comparar por cantidad de goles (descendente)
 		int resultado = Integer.compare(o.getGoles(), this.goles);
 

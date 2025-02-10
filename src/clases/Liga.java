@@ -30,6 +30,6 @@ public class Liga implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Liga [codL=" + codL + ", nomL=" + nomL + "]";
+		return "Liga [Codigo de liga:" + codL + ", Nombre de liga:" + nomL + "]";
 	}
 }

@@ -39,7 +39,7 @@ public class Jugador extends Integrante {
 
 	@Override
 	public String toString() {
-		return "\n < JUGADOR "+super.toString()+" codJ=" + codJ + ", lesionado=" + lesionado + ", goles=" + goles + ">" ;
+		return "\n <JUGADOR "+super.toString()+" Codigo de jugador: " + codJ + " /" + " Lesionado: " + lesionado + " /" +  " Goles: " + goles + "]" ;
 	}
 
 	@Override

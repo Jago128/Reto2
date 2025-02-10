@@ -51,6 +51,6 @@ public class Equipo implements Serializable {
 
 	@Override
 	public String toString() {
-		return "\nEQUIPO [codE=" + codE + ", nomE=" + nomE + ", codL=" + codL + ", listIntegrante=" + listIntegrante;
+		return "\nEQUIPO [Codigo de equipo:" + codE + ", Nombre de equipo:" + nomE + ", Codigo de liga:" + codL + ", Integrantes=" + listIntegrante;
 	}
 }
