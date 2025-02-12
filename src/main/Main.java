@@ -70,7 +70,6 @@ public class Main {
 		System.out.println("5. Eliminar equipo.");
 		System.out.println("6. Añadir equipo.");
 		System.out.println("7. Mostrar mayores goleadores.");
-		// Pueden haber más opciones
 		return Utilidades.leerInt(0, 7);
 	}
 
